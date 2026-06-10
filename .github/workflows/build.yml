@@ -30,11 +30,11 @@ jobs:
         git -C padavan-ng checkout "$PADAVAN_COMMIT"
         wget -qO- "$PADAVAN_TOOLCHAIN_URL" | tar -C padavan-ng --zstd -xf -
 
-    - name: Fix host build dependencies
+    - name: Force 64-bit Host CC for LuaJIT
       run: |
-        dpkg --add-architecture i386 || true
-        apt-get update
-        apt-get install -y build-essential gcc-multilib g++-multilib libc6-dev-i386 libc6-dev:i386
+        sed -i 's/-m32/-m64/g' build.config || true
+        sed -i 's/-m32/-m64/g' variables || true
+        sed -i 's/HOST_CFLAGS+= -m32//g' padavan-ng/trunk/libs/libluajit/LuaJIT-2.1.ROLLING/src/Makefile || true
 
     - name: Install themes
       run: |
